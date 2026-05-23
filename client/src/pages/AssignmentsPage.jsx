@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import api from '../services/api';
 import { AuthContext } from '../context/AuthContext';
 
@@ -122,12 +122,52 @@ const AssignmentsPage = () => {
     const currentItems = filteredAssignments.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredAssignments.length / itemsPerPage);
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
         <div style={{ fontFamily: 'sans-serif', color: '#1e293b' }}>
             <h2 style={{ marginBottom: '20px' }}>Personnel Assignments Management</h2>
 
             {error && <div style={{ padding: '12px', backgroundColor: '#fee2e2', color: '#b91c1c', borderRadius: '6px', marginBottom: '15px', fontWeight: 'bold' }}>⚠️ {error}</div>}
             {success && <div style={{ padding: '12px', backgroundColor: '#d1fae5', color: '#065f46', borderRadius: '6px', marginBottom: '15px', fontWeight: 'bold' }}>✓ {success}</div>}
+
+            {(user?.role === 'Admin' || user?.role === 'LogisticsOfficer') && (
+                <div style={{ backgroundColor: '#fff', padding: '20px', borderRadius: '8px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', marginBottom: '30px' }}>
+                    <h3 style={{ marginTop: 0, marginBottom: '15px' }}>Assign Asset to Personnel</h3>
+                    <form onSubmit={handleAddAssignment} style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                        <div style={{ flex: '2', minWidth: '220px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '5px' }}>Select Equipment</label>
+                            <select value={selectedEquipmentId} onChange={handleEquipmentChange} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
+                                <option value="">-- Choose Equipment --</option>
+                                {equipmentList.map(eq => (
+                                    <option key={eq.id} value={eq.id}>
+                                        {eq.name} (Type: {eq.type}, Base: {eq.base_id}, Available: {eq.quantity})
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div style={{ flex: '2', minWidth: '180px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '5px' }}>Personnel Name</label>
+                            <input type="text" value={personnelName} onChange={e => setPersonnelName(e.target.value)} placeholder="e.g. Captain Miller" style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                        </div>
+                        <div style={{ flex: '1', minWidth: '90px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '5px' }}>Base ID</label>
+                            <input type="number" readOnly value={baseId} placeholder="Auto-filled" style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: '#e2e8f0' }} />
+                        </div>
+                        <div style={{ flex: '1', minWidth: '90px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '5px' }}>Quantity</label>
+                            <input type="number" value={assignQty} onChange={e => setAssignQty(e.target.value)} min="1" placeholder="Qty" style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                        </div>
+                        <div style={{ flex: '1', minWidth: '130px' }}>
+                            <label style={{ display: 'block', fontSize: '14px', marginBottom: '5px' }}>Date Assigned</label>
+                            <input type="date" value={assignDate} onChange={e => setAssignDate(e.target.value)} style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }} />
+                        </div>
+                        <button type="submit" style={{ padding: '9px 20px', backgroundColor: '#2563eb', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Assign Asset</button>
+                    </form>
+                </div>
+            )}
 
             <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap', backgroundColor: '#f1f5f9', padding: '15px', borderRadius: '8px' }}>
                 <div style={{ flex: '3', minWidth: '200px' }}>
@@ -183,9 +223,9 @@ const AssignmentsPage = () => {
 
                     {totalPages > 1 && (
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '15px', gap: '10px', borderTop: '1px solid #f1f5f9' }}>
-                            <button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: currentPage === 1 ? '#f1f5f9' : '#fff', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}>Previous</button>
+                            <button disabled={currentPage === 1} onClick={() => handlePageChange(currentPage - 1)} style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: currentPage === 1 ? '#f1f5f9' : '#fff', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}>Previous</button>
                             <span style={{ fontSize: '14px' }}>Page <b>{currentPage}</b> of {totalPages}</span>
-                            <button disabled={currentPage === totalPages} onClick={() => setCurrentPage(p => p + 1)} style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: currentPage === totalPages ? '#f1f5f9' : '#fff', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}>Next</button>
+                            <button disabled={currentPage === totalPages} onClick={() => handlePageChange(currentPage + 1)} style={{ padding: '6px 12px', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: currentPage === totalPages ? '#f1f5f9' : '#fff', cursor: currentPage === totalPages ? 'not-allowed' : 'pointer' }}>Next</button>
                         </div>
                     )}
                 </div>
