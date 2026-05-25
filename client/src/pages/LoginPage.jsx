@@ -24,7 +24,6 @@ const LoginPage = () => {
 
         try {
             if (isRegister) {
-                // Register request
                 const payload = {
                     name,
                     email,
@@ -38,7 +37,6 @@ const LoginPage = () => {
                 setName('');
                 setPassword('');
             } else {
-                // Login request
                 const response = await api.post('/auth/login', { email, password });
                 login(response.data.user, response.data.token);
                 navigate('/');

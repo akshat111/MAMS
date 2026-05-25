@@ -2,7 +2,6 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Register User
 const register = async (req, res) => {
     const { name, email, password, role, base_id } = req.body;
 
@@ -31,7 +30,6 @@ const register = async (req, res) => {
     }
 };
 
-// Login User
 const login = async (req, res) => {
     const { email, password } = req.body;
 
