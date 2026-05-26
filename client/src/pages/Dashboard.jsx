@@ -41,6 +41,12 @@ const Dashboard = () => {
         setModalTitle('');
     };
 
+    const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN'); // Returns DD/MM/YYYY format
+    };
+
     const cardStyle = {
         flex: '1', minWidth: '180px', backgroundColor: '#fff', padding: '20px', borderRadius: '8px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)', cursor: 'pointer', textAlign: 'center', margin: '10px'
@@ -121,7 +127,7 @@ const Dashboard = () => {
                                         <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{item.equipment_name}</td>
                                         <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{item.equipment_type}</td>
                                         <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{item.quantity}</td>
-                                        <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{item.purchase_date || item.transfer_date}</td>
+                                        <td style={{ padding: '8px', borderBottom: '1px solid #eee' }}>{formatDate(item.purchase_date || item.transfer_date)}</td>
                                     </tr>
                                 ))}
                             </tbody>
